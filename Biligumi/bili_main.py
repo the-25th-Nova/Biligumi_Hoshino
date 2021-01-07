@@ -1,11 +1,11 @@
 import re
 
-from .Biligumi.BiliAPI import Bangumi
-from .Biligumi.ImageGenerator import BangumiImage
+from .BiliAPI import Bangumi
+from .ImageGenerator import BangumiImage
 from hoshino import Service, MessageSegment
 import hoshino
 
-sv2 = Service('biligumi_daily',enable_on_default=True,bundle='biligumi')
+sv2 = Service('biligumi_daily',enable_on_default=False,bundle='biligumi')
 
 bot = hoshino.get_bot()
 
@@ -29,8 +29,16 @@ async def main(ctx):
                 el = k.group(2)
         elif k.group(3):
             el = k.group(3)
-        res = Bangumi(day=el)
+        res = Bangumi(day=week_c.index(el))
         r = BangumiImage('{}「星期{}」新番时间表'.format(res.ep.get('date'),week_c[res.ep.get('day_of_week')]))
         r.gen_image(res.ep.get('seasons'))
         
         await bot.send(ctx,MessageSegment(type_='reply',data={'id':m_id}) + MessageSegment.image(file=r.pic2b64()))
+        
+        
+@sv2.scheduled_job('cron',hour='0',minute='1')
+async def daily_report():
+    res = Bangumi()
+    r = BangumiImage('{}「星期{}」新番时间表'.format(res.ep.get('date'),week_c[res.ep.get('day_of_week')]))
+    r.gen_image(res.ep.get('seasons'))
+    await sv2.broadcast('又是美好的一天(*•̀ᴗ•́*)و\n' + MessageSegment.image(file=r.pic2b64()),'biligumi_broadcast',0)
