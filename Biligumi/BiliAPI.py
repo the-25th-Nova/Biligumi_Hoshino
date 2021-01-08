@@ -34,15 +34,19 @@ class Bangumi(object):
                 return False
     
     def update_check(self,now:dict):
-        if len(now) != len(self.ep):
+        if len(now.get('seasons')) != len(self.ep.get('seasons')):
             print('Updating raw')
             return []
         content = []
-        for i in range(len(self.ep.get('seasons'))):
-            if self.ep.get('seasons')[i].get('is_published') != now.get('seasons')[i].get('is_published'):
-                #print(self.ep.get('seasons')[i])
-                content.append(self.get_detail(epid=self.ep.get('seasons')[i].get('ep_id'),ssid=self.ep.get('seasons')[i].get('season_id'),ts=self.ep.get('seasons')[i].get('pub_ts')))
-        return content
+        try:
+            for i in range(len(self.ep.get('seasons'))):
+                if self.ep.get('seasons')[i].get('is_published') != now.get('seasons')[i].get('is_published'):
+                    #print(self.ep.get('seasons')[i])
+                    content.append(self.get_detail(epid=self.ep.get('seasons')[i].get('ep_id'),ssid=self.ep.get('seasons')[i].get('season_id'),ts=self.ep.get('seasons')[i].get('pub_ts')))
+            return content
+        except Exception as e:
+            print(e)
+            return []
         
     def get_detail(self,ssid='',epid='',ts=0):
         if epid:
