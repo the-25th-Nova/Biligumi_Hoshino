@@ -117,7 +117,7 @@ im.height/5*times)
         base64_str = base64.b64encode(buf.getvalue()).decode()
         return 'base64://' + base64_str
         
-    def gen_image(self,ep:dict,is_update:False):
+    def gen_image(self,ep:dict,is_update=False):
         ''' generate self.img into pretty img with text & cover
                  ep: eposide dict from api'''
         
