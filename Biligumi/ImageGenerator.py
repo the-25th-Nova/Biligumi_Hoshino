@@ -24,7 +24,7 @@ class BangumiImage(object):
     '''
     def __init__(self,title:str,theme=False):
         self.theme = self.gen_theme(theme)
-        print(self.theme)
+        #print(self.theme)
         self.img = self.create_background(text=title)
         self.cover_width = 0
         try:
@@ -117,7 +117,7 @@ im.height/5*times)
         base64_str = base64.b64encode(buf.getvalue()).decode()
         return 'base64://' + base64_str
         
-    def gen_image(self,ep:dict):
+    def gen_image(self,ep:dict,is_update:False):
         ''' generate self.img into pretty img with text & cover
                  ep: eposide dict from api'''
         
@@ -125,7 +125,10 @@ im.height/5*times)
             # 救救我，我也看不懂了
             
             im_t = self.draw_from_url(self.create_background(),i.get('cover'))
-            im_t = self.to_all_decoration(im_t,['{} - {}'.format(i.get('title'),i.get('pub_index')),i.get('pub_time')])
+            if is_update:
+                im_t = self.to_all_decoration(im_t,['{}'.format(i.get('title'))])
+            else:
+                im_t = self.to_all_decoration(im_t,['{} - {}'.format(i.get('title'),i.get('pub_index')),i.get('pub_time')])
             self.img = ImageOps.expand(self.img,(0,0,0,im_t.height),fill=self.theme.get('main'))
             self.img.paste(im_t,(0, self.img.height - im_t.height))
             
